@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0d6efd" />
+  <title>Portfolio · Tomás Romero Cejudo (Bootstrap)</title>
+  <link rel="icon" type="image/png" href="esiiab.png" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+    body { background: #f2f4f7; }
+    .hero-img { max-width: 180px; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+    .section-title { margin-top: 2.5rem; margin-bottom: 1rem; }
+    .tech-badge { font-size: .85rem; }
+    footer small { color: #6c757d; }
+  </style>
+</head>
+<body>
+  <audio id="bg-audio" src="cold-sad-pianos-150019.mp3" autoplay loop preload="auto"></audio>
+  <div id="audio-controls" class="position-fixed d-flex flex-column align-items-end gap-2" style="top:1rem; right:1rem; z-index:1080;">
+    <button id="audio-toggle" type="button" class="btn btn-sm btn-outline-secondary">
+      Silenciar
+    </button>
+    <div class="card p-2 shadow-sm" style="min-width:140px;">
+      <label for="audio-volume" class="form-label mb-1 small">Volumen <span id="vol-label">20%</span></label>
+      <input type="range" id="audio-volume" class="form-range" min="0" max="1" step="0.01" value="0.2">
+    </div>
+  </div>
+  <script>
+    (function(){
+      const audio = document.getElementById('bg-audio');
+      const btn = document.getElementById('audio-toggle');
+      const volSlider = document.getElementById('audio-volume');
+      const volLabel = document.getElementById('vol-label');
+      const LS_KEY_MUTED = 'bgAudioMuted';
+      const LS_KEY_VOL = 'bgAudioVolume';
+
+      // Cargar estado previo
+      let storedVol = localStorage.getItem(LS_KEY_VOL);
+      if(storedVol !== null) {
+        const vol = Math.min(1, Math.max(0, parseFloat(storedVol)));
+        audio.volume = vol;
+        volSlider.value = vol;
+      } else {
+        audio.volume = 0.2; // valor inicial
+      }
+      volLabel.textContent = Math.round(audio.volume * 100) + '%';
+
+      let storedMuted = localStorage.getItem(LS_KEY_MUTED);
+      if(storedMuted === 'true') {
+        audio.muted = true;
+      }
+
+      function updateLabel(){
+        btn.textContent = audio.muted ? 'Activar sonido' : 'Silenciar';
+      }
+
+      function tryPlay(){
+        audio.play().catch(()=>{
+          // Si no deja reproducir con sonido, silencia y actualiza
+          audio.muted = true;
+          updateLabel();
+        });
+      }
+
+      btn.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        localStorage.setItem(LS_KEY_MUTED, audio.muted);
+        if(!audio.muted){
+          audio.play().catch(()=>{});
+        }
+        updateLabel();
+      });
+
+      volSlider.addEventListener('input', () => {
+        const v = parseFloat(volSlider.value);
+        audio.volume = v;
+        volLabel.textContent = Math.round(v * 100) + '%';
+        localStorage.setItem(LS_KEY_VOL, v);
+        if(audio.muted && v > 0) {
+          // Si el usuario mueve el volumen mientras está muteado, lo desmuteamos
+          audio.muted = false;
+          localStorage.setItem(LS_KEY_MUTED, 'false');
+          updateLabel();
+          audio.play().catch(()=>{});
+        }
+      });
+
+      document.addEventListener('click', function once(){
+        if(audio.paused && !audio.muted){ audio.play().catch(()=>{}); }
+        document.removeEventListener('click', once);
+      });
+
+      updateLabel();
+      tryPlay();
+    })();
+  </script>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="#top">Portfolio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-3 mb-2 mb-lg-0 gap-lg-2">
+          <li class="nav-item"><a class="nav-link" href="#sobre-mi">Sobre mí</a></li>
+          <li class="nav-item"><a class="nav-link" href="#experiencia">Experiencia</a></li>
+          <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header id="sobre-mi" class="py-5 bg-light border-bottom">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-12 col-md-3 text-center">
+          <img src="FotoFormal.jpeg" alt="Foto de Tomás Romero Cejudo" class="hero-img img-fluid" />
+        </div>
+        <div class="col-12 col-md-9 text-center text-md-start">
+          <h1 class="display-5 fw-bold mb-3">Tomás Romero Cejudo</h1>
+          <p class="lead mb-3">Ingeniero de software con <strong>5 años de experiencia</strong> en desarrollo web full stack. Apasionado por crear soluciones limpias, escalables y centradas en el usuario.</p>
+          <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+            <span class="badge text-bg-primary tech-badge">Java</span>
+            <span class="badge text-bg-success tech-badge">Python</span>
+            <span class="badge text-bg-warning text-dark tech-badge">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Sección Video Demo -->
+  <section id="demo-video" class="container my-5">
+    <h2 class="section-title h3 border-start border-4 border-primary ps-3">Demo en vídeo</h2>
+    <div class="ratio ratio-16x9 mb-2">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/4lKQVhJPIK0?rel=0"
+        title="YouTube video player"
+        loading="lazy"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+        class="rounded shadow-sm border"></iframe>
+    </div>
+  </section>
+  
+    <!-- Bloque de enlaces centrados añadido -->
+    <section class="my-5 py-4">
+      <div class="d-flex flex-column align-items-center">
+        <nav class="d-flex flex-wrap justify-content-center gap-4 fs-5" aria-label="Enlaces rápidos">
+          <a class="text-decoration-none link-primary fw-semibold" href="#experiencia">Experiencia</a>
+          <a class="text-decoration-none link-primary fw-semibold" href="#proyectos">Proyectos</a>
+          <a class="text-decoration-none link-primary fw-semibold" href="https://twitch.tv/mideuv" target="_blank" rel="noreferrer">Twitch</a>
+        </nav>
+      </div>
+    </section>
+
+  <main class="container my-5">
+    <section id="experiencia">
+      <h2 class="section-title h3 border-start border-4 border-primary ps-3">Experiencia</h2>
+      <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item">Estudios avanzados de Ingeniería del Software en la Escuela Superior de Ingenieros Informáticos de Albacete (2020 - presente)</li>
+        <li class="list-group-item">Desarrollador Full Stack en empresa familiar Romade (2024 - 2025)</li>
+      </ul>
+    </section>
+
+    <aside class="mb-5">
+      <h3 class="h5 text-uppercase text-muted">Tecnologías favoritas</h3>
+      <div class="d-flex flex-wrap gap-2 mt-2">
+        <span class="badge rounded-pill text-bg-secondary">Java</span>
+        <span class="badge rounded-pill text-bg-secondary">Python</span>
+        <span class="badge rounded-pill text-bg-secondary">JavaScript</span>
+      </div>
+    </aside>
+
+    <section id="proyectos" class="mb-5">
+      <h2 class="section-title h3 border-start border-4 border-primary ps-3">Proyectos realizados</h2>
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-lg-4">
+          <article class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h3 class="h5 card-title">Sitio Web Corporativo</h3>
+              <p class="card-text flex-grow-1">Aplicación web para gestionar tienda online: creación y eliminación de pedidos, gestión de usuarios y panel administrativo.</p>
+              <div class="mt-3">
+                <span class="badge text-bg-info">HTML</span>
+                <span class="badge text-bg-info">CSS</span>
+                <span class="badge text-bg-info">JavaScript</span>
+              </div>
+            </div>
+            <div class="card-footer"><small class="text-muted">Proyecto 2025</small></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulario de contacto adaptado a Bootstrap -->
+    <section id="contacto" class="mb-5">
+      <h2 class="section-title h3 border-start border-4 border-primary ps-3">Formulario de contacto</h2>
+      <form class="needs-validation" novalidate method="post" action="/">
+        <fieldset class="border rounded-3 p-4">
+          <legend class="float-none w-auto px-2 fw-semibold">Información personal</legend>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Nombre</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Nombre" required>
+              <div class="invalid-feedback">Introduce tu nombre.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="tomas@example.com" required>
+              <div class="invalid-feedback">Introduce un email válido.</div>
+            </div>
+            <div class="col-12">
+              <label for="mensaje" class="form-label">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" class="form-control" rows="4" required></textarea>
+              <div class="invalid-feedback">Escribe un mensaje.</div>
+            </div>
+
+            <!-- Fieldset adicional -->
+            <fieldset class="col-12 border rounded-3 p-3">
+              <legend class="float-none w-auto px-2 fs-6 fw-semibold">Otros</legend>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="why" class="form-label">¿Sobre qué quieres contactar?</label>
+                  <select name="why" id="why" class="form-select" required>
+                    <option value="" selected disabled>Selecciona una opción</option>
+                    <option value="1">Trabajo</option>
+                    <option value="2">Consulta</option>
+                    <option value="3">Otros</option>
+                  </select>
+                  <div class="invalid-feedback">Selecciona un motivo.</div>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                    <label class="form-check-label" for="terms">Acepto los términos</label>
+                    <div class="invalid-feedback">Debes aceptar los términos.</div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="langInput" class="form-label mb-1">¿Qué lenguaje necesitas ayuda?</label>
+                  <input class="form-control" list="lang" id="langInput" name="lang" placeholder="Empieza a escribir...">
+                  <datalist id="lang">
+                    <option value="JavaScript"></option>
+                    <option value="Python"></option>
+                    <option value="C++"></option>
+                  </datalist>
+                  <div class="form-text">Elige uno de la lista o escribe otro.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="col-12 text-end">
+              <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <!-- Sección FAQ -->
+  <section id="faq" class="container mb-5">
+    <h2 class="section-title h3 border-start border-4 border-primary ps-3">Preguntas frecuentes</h2>
+    <div class="accordion" id="faqAccordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faq-h-contacto">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-collapse-contacto" aria-expanded="false" aria-controls="faq-collapse-contacto">
+            ¿Cómo contacto?
+          </button>
+        </h2>
+        <div id="faq-collapse-contacto" class="accordion-collapse collapse" aria-labelledby="faq-h-contacto" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Enviando un correo a <a href="mailto:tomas.romero1@alu.uclm.es">tomas.romero1@alu.uclm.es</a>.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faq-h-nombre">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-collapse-nombre" aria-expanded="false" aria-controls="faq-collapse-nombre">
+            ¿Cómo me llamo?
+          </button>
+        </h2>
+  <div id="faq-collapse-nombre" class="accordion-collapse collapse" aria-labelledby="faq-h-nombre" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Tomás Romero Cejudo.
+          </div>
+        </div>
+      </div><!--- IGNORE --->
+    </div>
+  </section>
+
+  <footer class="py-4 bg-dark text-light mt-auto">
+    <div class="container text-center">
+      <small>&copy; 2025 Tomás Romero Cejudo · Hecho con Bootstrap 5</small>
+    </div>
+  </footer>
+
+  <!-- Dialog nativo accesible -->
+  <dialog id="infoModal" class="rounded shadow" aria-labelledby="infoModalTitle" aria-modal="true" style="padding:0;border:none;max-width:520px;width:90%;">
+    <div class="p-4">
+      <h2 id="infoModalTitle" class="h4 mb-3">Se puede abrir un modal</h2>
+      <p class="mb-4">Este cuadro usa el elemento <code>&lt;dialog&gt;</code> nativo. No depende de librerías externas para mostrarse.</p>
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="closeDialog">Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+  <button type="button" id="openDialog" class="btn btn-info position-fixed" style="bottom:1.25rem; right:1.25rem; z-index:1090;">Ver más información</button>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script>
+    // Validación Bootstrap personalizada
+    (function(){
+      'use strict';
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', evt => {
+          if(!form.checkValidity()) { evt.preventDefault(); evt.stopPropagation(); }
+          form.classList.add('was-validated');
+        });
+      });
+    })();
+
+    // Lógica dialog nativo
+    (function(){
+      const dialog = document.getElementById('infoModal');
+      const openBtn = document.getElementById('openDialog');
+      const closeBtn = document.getElementById('closeDialog');
+      if(!dialog || !openBtn || !closeBtn) return;
+
+      function openDialog(){
+        if(!dialog.open){
+          dialog.showModal();
+          dialog.querySelector('h2')?.focus?.();
+          document.body.classList.add('modal-open');
+        }
+      }
+      function closeDialog(){
+        if(dialog.open){
+          dialog.close();
+          openBtn.focus();
+          document.body.classList.remove('modal-open');
+        }
+      }
+      openBtn.addEventListener('click', openDialog);
+      closeBtn.addEventListener('click', closeDialog);
+      dialog.addEventListener('cancel', () => {}); // ESC cierra por defecto
+      dialog.addEventListener('click', e => {
+        const rect = dialog.getBoundingClientRect();
+        const inside = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+        if(!inside) closeDialog();
+      });
+    })();
+
+    // Estilos soporte: backdrop y bloqueo scroll
+    (function(){
+      const style = document.createElement('style');
+      style.textContent = 'body.modal-open{overflow:hidden;} dialog::backdrop{background:rgba(0,0,0,.45);}';
+      document.head.appendChild(style);
+    })();
+  </script>
+</body>
+</html>
